@@ -43,11 +43,23 @@ class DemoOffline(IO):
                             video_label_name, intensity, video)
 
         # visualize
+        video_writer = None
         for image in images:
+            if not video_writer:
+                video_writer = cv2.VideoWriter(
+                    self.arg.video.replace(".mp4", "_st-gcn.mp4"),
+                    cv2.VideoWriter_fourcc(*"mp4v"),
+                    25,
+                    image.shape[1::-1]
+                )
             image = image.astype(np.uint8)
             cv2.imshow("ST-GCN", image)
+
+            video_writer.write(image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+        if video_writer:
+            video_writer.release()
 
     def predict(self, data):
         # forward
