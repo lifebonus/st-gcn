@@ -96,8 +96,10 @@ class DemoOffline(IO):
         if self.arg.openpose is not None:
             sys.path.append('{}/python'.format(self.arg.openpose))
             sys.path.append('{}/build/python'.format(self.arg.openpose))
+            sys.path.append(f"{self.arg.openpose}/bin/python/openpose/Release")
+            os.environ['PATH'] += f";{self.arg.openpose}/bin"
         try:
-            from openpose import pyopenpose as op
+            import pyopenpose as op
         except:
             print('Can not find Openpose Python API.')
             return
@@ -134,7 +136,7 @@ class DemoOffline(IO):
             # pose estimation
             datum = op.Datum()
             datum.cvInputData = orig_image
-            opWrapper.emplaceAndPop([datum])
+            opWrapper.emplaceAndPop(op.VectorDatum([datum]))
             multi_pose = datum.poseKeypoints  # (num_person, num_joint, 3)
             if len(multi_pose.shape) != 3:
                 continue
